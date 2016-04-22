@@ -78,9 +78,9 @@ public class WebService {
         return usuarios;
     }
 
-    public static boolean invokeRegistrarUsuario(String pNombre,String pNumero, String pImg){
+    public static String invokeRegistrarUsuario(String pNombre,String pNumero, String pImg){
 
-        String respStr = "false";
+        String respStr = "";
 
         SoapObject request = new SoapObject(NAMESPACE,"RegistrarUsuario");
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -101,9 +101,9 @@ public class WebService {
 
         }catch (Exception e)
         {
-
+           Log.wtf("Error Insertar", e.getMessage());
         }
 
-        return Boolean.valueOf(respStr);
+        return respStr;
     }
 }

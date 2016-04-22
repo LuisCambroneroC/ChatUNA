@@ -3,6 +3,7 @@ package una.example.com.chatuna;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,7 +57,6 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    //Comentario sss
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -169,7 +170,7 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(nombre)) {
+        if (TextUtils.isEmpty(nombre)) {
             txtNombre.setError(getString(R.string.error_invalid_password));
             focusView = txtNombre;
             cancel = true;
@@ -190,7 +191,7 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new TareaIngresoUsuario(numero, nombre,img);
+            mAuthTask = new TareaIngresoUsuario(numero, nombre,"");
             mAuthTask.execute((Void) null);
         }
     }
@@ -304,6 +305,7 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
         private final String numero;
         private final String nombre;
         private final String img;
+        private String resultado;
 
         TareaIngresoUsuario(String numero, String nombre,String img) {
             this.numero = numero;
@@ -315,12 +317,8 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            if(WebService.invokeRegistrarUsuario(nombre,numero,img))
-            {
-                Toast.makeText(getApplicationContext(),"Registrado", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
-            }
+
+                resultado = WebService.invokeRegistrarUsuario(nombre, numero, img);
 
             /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
@@ -339,8 +337,21 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
             mAuthTask = null;
             showProgress(false);
 
+            Intent intent = new Intent(getApplicationContext(),act_Main.class);
+            intent.putExtra("login-nombre",nombre);
+            intent.putExtra("login-numero", numero);
+
             if (success) {
-                finish();
+                switch (resultado){
+                    case "Usuario Registrado":
+                        startActivity(intent);
+                        break;
+                    case "El usuario ya existe":
+                        startActivity(intent);
+                        break;
+                    case "error":
+                        break;
+                }
             } else {
                 txtNombre.setError(getString(R.string.error_incorrect_password));
                 txtNombre.requestFocus();
