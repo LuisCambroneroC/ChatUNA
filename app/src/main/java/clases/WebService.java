@@ -64,7 +64,7 @@ public class WebService {
             if (rs != null)
                 for (SoapObject so : rs){
                   Usuario u = new Usuario(0,so.getPropertyAsString("usuNombre"),so.getPropertyAsString("usuNumero"),
-                          so.getPropertyAsString("usuEstadoAccion"),so.getPropertyAsString("usuEstadoConexion"),
+                          so.getPropertyAsString("usuEstadoaccion"),so.getPropertyAsString("usuEstadoconexion"),
                           so.getPropertyAsString("usuEstado"));
 
                           if (so.hasProperty("usuImg"))u.setUsuImg(so.getPropertyAsString("usuImg"));
@@ -86,6 +86,9 @@ public class WebService {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 
         HttpTransportSE andHttpTransp = new HttpTransportSE(URL);
+
+        PropertyInfo pi = new PropertyInfo();
+        pi.setName("pNombre"); pi.setValue(pNumero); pi.setType(String.class);
 
         request.addProperty(getNewPropertyInfo("pNombre",pNombre,String.class));
         request.addProperty(getNewPropertyInfo("pNumero", pNumero, String.class));

@@ -14,5 +14,11 @@
         completions."
     </string>
     <string name="lblLogin">Bienvenido a UNA-Chat, ingresa y disfruta de mensajeria gratis !</string>
+    <string name="title_activity_act_menu">Menu</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 
 </resources>
