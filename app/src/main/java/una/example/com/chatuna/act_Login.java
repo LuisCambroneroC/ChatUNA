@@ -315,18 +315,12 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-
+            try {
                 resultado = WebService.invokeRegistrarUsuario(nombre, numero, img);
+            }catch(Exception e){
+                resultado = "Error al intentar conectar con el servidor, intentelo de nuevo";
+            }
 
-            /*for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
 
             // TODO: register the new account here.
             return true;
@@ -337,25 +331,25 @@ public class act_Login extends AppCompatActivity implements LoaderCallbacks<Curs
             mAuthTask = null;
             showProgress(false);
 
-            Intent intent = new Intent(getApplicationContext(),act_Main.class);
+            Intent intent = new Intent(getApplicationContext(),act_menu.class);
             intent.putExtra("login-nombre",nombre);
             intent.putExtra("login-numero", numero);
 
-            if (success) {
                 switch (resultado){
-                    case "Usuario Registrado":
+                    case "Usuario registrado":
                         startActivity(intent);
                         break;
                     case "El usuario ya existe":
                         startActivity(intent);
                         break;
                     case "error":
+                        Toast.makeText(getApplicationContext(),"Error ",Toast.LENGTH_SHORT).show();
                         break;
                 }
-            } else {
+           /* } else {
                 txtNombre.setError(getString(R.string.error_incorrect_password));
                 txtNombre.requestFocus();
-            }
+            }*/
         }
 
         @Override
