@@ -24,7 +24,8 @@ public class WebService {
     //Namespace of the Webservice - can be found in WSDL
     private static String NAMESPACE = "http://WS/";
     //Webservice URL - WSDL File location
-    private static String URL = "http://10.0.3.2:9090/WSUNAchat/WSUNAchat?wsdl"; //si es celular aparte pone la ip de la pc
+    private static String URL = "http://10.0.3.2:80/WSUNAchat/WSUNAchat?wsdl"; //si es celular aparte pone la ip de la pc
+    //private static String URL = "http://192.168.100.1:80/WSUNAchat/WSUNAchat?wsdl"; //si es celular aparte pone la ip de la pc
     //SOAP Action URI again Namespace + Web method name
     private static String SOAP_ACTION = "http://WS/WSUNAchat/";
 
@@ -59,10 +60,21 @@ public class WebService {
             androidHttpTransport.call(SOAP_ACTION + "ListarUsuarios",envelope);
 
             //Recolectar los datos.
-            Vector<SoapObject> rs = (Vector<SoapObject>)envelope.getResponse();
 
-            if (rs != null)
-                for (SoapObject so : rs){
+            Vector<SoapObject> vso = null;
+            Object response = envelope.getResponse();
+
+            //Codigo en caso de que la consulta traiga solo un resultado
+            if(response instanceof Vector){
+                vso = (Vector<SoapObject>)response;
+            }else if(response instanceof SoapObject){
+                SoapObject so = (SoapObject)response;
+                vso = new Vector<SoapObject>();
+                vso.add(so);
+            }
+
+            if (vso != null)
+                for (SoapObject so : vso){
                   Usuario u = new Usuario(0,so.getPropertyAsString("usuNombre"),so.getPropertyAsString("usuNumero"),
                           so.getPropertyAsString("usuEstadoaccion"),so.getPropertyAsString("usuEstadoconexion"),
                           so.getPropertyAsString("usuEstado"));
@@ -86,9 +98,6 @@ public class WebService {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 
         HttpTransportSE andHttpTransp = new HttpTransportSE(URL);
-
-        PropertyInfo pi = new PropertyInfo();
-        pi.setName("pNombre"); pi.setValue(pNumero); pi.setType(String.class);
 
         request.addProperty(getNewPropertyInfo("pNombre",pNombre,String.class));
         request.addProperty(getNewPropertyInfo("pNumero", pNumero, String.class));
